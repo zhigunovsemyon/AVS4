@@ -10,6 +10,22 @@ double fifth(double x)
 }
 
 double
+right_rect_calc(double begin, double end, int num_steps, double (*func)(double))
+{
+	double sum = 0.0;
+	double step = (end - begin) / (double)num_steps;
+
+#pragma omp parallel for reduction(+ : sum)
+	for (int i = 1; i <= num_steps; ++i) {
+		double x = begin + i * step;
+		double h = func(x);
+		sum += h * step;
+	}
+
+	return sum;
+}
+
+double
 left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -59,5 +75,13 @@ int main(void)
 	calculate(0.00001, BEGIN, END, left_rect_calc, fifth);
 	calculate(0.000001, BEGIN, END, left_rect_calc, fifth);
 	calculate(0.0000001, BEGIN, END, left_rect_calc, fifth);
+	putchar('\n');
+
+	puts("Метод правых прямоугольников:");
+	calculate(0.00001, BEGIN, END, right_rect_calc, fifth);
+	calculate(0.000001, BEGIN, END, right_rect_calc, fifth);
+	calculate(0.0000001, BEGIN, END, right_rect_calc, fifth);
+	putchar('\n');
+
 	return 0;
 }
