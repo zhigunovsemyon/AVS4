@@ -16,7 +16,7 @@ left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 	double step = (end - begin) / (double)num_steps;
 
 #pragma omp parallel for reduction(+ : sum)
-	for (int i = 0; i <= num_steps; ++i) {
+	for (int i = 0; i < num_steps; ++i) {
 		double x = begin + i * step;
 		double h = func(x);
 		sum += h * step;
@@ -34,11 +34,11 @@ void calculate(double epsilon,
 				double (*)(double)),
 	       double (*math_func)(double))
 {
-	double prev = INFINITY;
+	double res, prev = INFINITY;
 
 	double start_time = omp_get_wtime();
-	for (int num_steps = 1;; num_steps++) {
-		double res = method(begin, end, num_steps, math_func);
+	for (int num_steps = 1;; num_steps++, prev = res) {
+		res = method(begin, end, num_steps, math_func);
 
 		if (fabs(res - prev) < epsilon) {
 			double dt = omp_get_wtime() - start_time;
@@ -48,7 +48,6 @@ void calculate(double epsilon,
 			printf("Результат: %.10lf\n", res);
 			return;
 		}
-		prev = res;
 	}
 }
 
