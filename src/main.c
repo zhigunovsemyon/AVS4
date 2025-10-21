@@ -9,6 +9,24 @@ double fifth(double x)
 }
 
 double
+simpson_calc(double begin, double end, int num_steps, double (*func)(double))
+{
+	double sum = 0.0;
+	double step = (end - begin) / (double)num_steps;
+
+#pragma omp parallel for reduction(+ : sum)
+	for (int i = 1; i <= num_steps; ++i) {
+		double x2 = begin + i * step;
+		double x1 = x2 - step;
+		double x12 = x1 + step * 0.5;
+
+		sum += func(x2) + func(x1) + func(x12);
+		// sum += h * step;
+	}
+
+	return sum * step / 3.0;
+}
+double
 trapezoid_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -128,6 +146,13 @@ int main(void)
 	calculate(0.000001, BEGIN, END, trapezoid_calc, fifth);
 	calculate(0.0000001, BEGIN, END, trapezoid_calc, fifth);
 	calculate(0.000000000000001, BEGIN, END, trapezoid_calc, fifth);
+	putchar('\n');
+
+	puts("Метод Симпсона:");
+	calculate(0.00001, BEGIN, END, simpson_calc, fifth);
+	calculate(0.000001, BEGIN, END, simpson_calc, fifth);
+	calculate(0.0000001, BEGIN, END, simpson_calc, fifth);
+	calculate(0.000000000000001, BEGIN, END, simpson_calc, fifth);
 	putchar('\n');
 
 	return 0;
