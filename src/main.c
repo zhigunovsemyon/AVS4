@@ -3,12 +3,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-double fifth(double x)
+static double fifth(double x)
 {
 	return asin(1.0 / sqrt(1.1 + x));
 }
 
-double
+static double
 simpson_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -26,7 +26,8 @@ simpson_calc(double begin, double end, int num_steps, double (*func)(double))
 
 	return sum * step / 3.0;
 }
-double
+
+static double
 trapezoid_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -43,7 +44,7 @@ trapezoid_calc(double begin, double end, int num_steps, double (*func)(double))
 	return sum * step;
 }
 
-double
+static double
 right_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -59,7 +60,7 @@ right_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 	return sum;
 }
 
-double
+static double
 centre_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -75,7 +76,7 @@ centre_rect_calc(double begin, double end, int num_steps, double (*func)(double)
 	return sum;
 }
 
-double
+static double
 left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -91,7 +92,7 @@ left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 	return sum;
 }
 
-void calculate(double epsilon,
+static void calculate(double epsilon,
 	       double begin,
 	       double end,
 	       double (*method)(double begin,
