@@ -21,7 +21,6 @@ simpson_calc(double begin, double end, int num_steps, double (*func)(double))
 		double x12 = x1 + step * 0.5;
 
 		sum += func(x2) + func(x1) + func(x12);
-		// sum += h * step;
 	}
 
 	return sum * step / 3.0;
@@ -60,8 +59,10 @@ right_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 	return sum;
 }
 
-static double
-centre_rect_calc(double begin, double end, int num_steps, double (*func)(double))
+static double centre_rect_calc(double begin,
+			       double end,
+			       int num_steps,
+			       double (*func)(double))
 {
 	double sum = 0.0;
 	double step = (end - begin) / (double)num_steps;
@@ -93,13 +94,13 @@ left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 }
 
 static void calculate(double epsilon,
-	       double begin,
-	       double end,
-	       double (*method)(double begin,
-				double end,
-				int num_steps,
-				double (*)(double)),
-	       double (*math_func)(double))
+		      double begin,
+		      double end,
+		      double (*method)(double begin,
+				       double end,
+				       int num_steps,
+				       double (*)(double)),
+		      double (*math_func)(double))
 {
 	double res, prev = INFINITY;
 
@@ -134,26 +135,20 @@ int main(void)
 	calculate(0.0000001, BEGIN, END, right_rect_calc, fifth);
 	putchar('\n');
 
-	puts("Метод средних прямоугольников:");
-	calculate(0.00001, BEGIN, END, centre_rect_calc, fifth);
-	calculate(0.000001, BEGIN, END, centre_rect_calc, fifth);
-	calculate(0.0000001, BEGIN, END, centre_rect_calc, fifth);
-	calculate(0.000000000000001, BEGIN, END, centre_rect_calc, fifth);
-	putchar('\n');
+	for (double e = 0.00001; e > 0.000000000000001; e /= 10) {
 
-	puts("Метод трапеций:");
-	calculate(0.00001, BEGIN, END, trapezoid_calc, fifth);
-	calculate(0.000001, BEGIN, END, trapezoid_calc, fifth);
-	calculate(0.0000001, BEGIN, END, trapezoid_calc, fifth);
-	calculate(0.000000000000001, BEGIN, END, trapezoid_calc, fifth);
-	putchar('\n');
+		puts("Метод средних прямоугольников:");
+		calculate(e, BEGIN, END, centre_rect_calc, fifth);
+		putchar('\n');
 
-	puts("Метод Симпсона:");
-	calculate(0.00001, BEGIN, END, simpson_calc, fifth);
-	calculate(0.000001, BEGIN, END, simpson_calc, fifth);
-	calculate(0.0000001, BEGIN, END, simpson_calc, fifth);
-	calculate(0.000000000000001, BEGIN, END, simpson_calc, fifth);
-	putchar('\n');
+		puts("Метод трапеций:");
+		calculate(e, BEGIN, END, trapezoid_calc, fifth);
+		putchar('\n');
+
+		puts("Метод Симпсона:");
+		calculate(e, BEGIN, END, simpson_calc, fifth);
+		putchar('\n');
+	}
 
 	return 0;
 }
