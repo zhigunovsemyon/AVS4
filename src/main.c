@@ -26,6 +26,22 @@ right_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 }
 
 double
+centre_rect_calc(double begin, double end, int num_steps, double (*func)(double))
+{
+	double sum = 0.0;
+	double step = (end - begin) / (double)num_steps;
+
+#pragma omp parallel for reduction(+ : sum)
+	for (int i = 0; i < num_steps; ++i) {
+		double x = begin + i * step;
+		double h = func(x + 0.5 * step);
+		sum += h * step;
+	}
+
+	return sum;
+}
+
+double
 left_rect_calc(double begin, double end, int num_steps, double (*func)(double))
 {
 	double sum = 0.0;
@@ -83,5 +99,11 @@ int main(void)
 	calculate(0.0000001, BEGIN, END, right_rect_calc, fifth);
 	putchar('\n');
 
+	puts("Метод средних прямоугольников:");
+	calculate(0.00001, BEGIN, END, centre_rect_calc, fifth);
+	calculate(0.000001, BEGIN, END, centre_rect_calc, fifth);
+	calculate(0.0000001, BEGIN, END, centre_rect_calc, fifth);
+	calculate(0.000000000000001, BEGIN, END, centre_rect_calc, fifth);
+	putchar('\n');
 	return 0;
 }
