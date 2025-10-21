@@ -13,8 +13,13 @@ double func(double x)
 
 int main(void)
 {
-	for(int i = 0; (double)i < END; ++i){
-		printf("f(%d) = %lf\n", i, func(i));
+	int num_steps = 10;
+	double step = (END - BEGIN)/ (double)num_steps;
+
+	// #pragma omp parallel for
+	for(int i = 0; i <= num_steps; ++i){
+		double x = BEGIN + i * step;
+		printf("f(%lf) = %lf\n", x, func(x));
 	}
 	return 0;
 }
