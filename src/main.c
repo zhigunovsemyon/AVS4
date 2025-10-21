@@ -37,11 +37,10 @@ trapezoid_calc(double begin, double end, int num_steps, double (*func)(double))
 		double x1 = begin + i * step;
 		double x2 = x1 - step;
 
-		double h = 0.5 * (func(x2) + func(x1));
-		sum += h * step;
+		sum += 0.5 * (func(x2) + func(x1));
 	}
 
-	return sum;
+	return sum * step;
 }
 
 double
