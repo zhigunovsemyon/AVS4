@@ -20,10 +20,10 @@ simpson_calc(double begin, double end, int num_steps, double (*func)(double))
 		double x1 = x2 - step;
 		double x12 = x1 + step * 0.5;
 
-		sum += func(x2) + func(x1) + func(x12);
+		sum += func(x2) + func(x1) + 4 * func(x12);
 	}
 
-	return sum * step / 3.0;
+	return sum * step / 6.0;
 }
 
 static double
