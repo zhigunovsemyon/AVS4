@@ -29,15 +29,14 @@ simpson_calc(double begin, double end, int num_steps, double (*func)(double))
 static double
 trapezoid_calc(double begin, double end, int num_steps, double (*func)(double))
 {
-	double sum = 0.0;
+	double sum = func(begin) + func(end);
 	double step = (end - begin) / (double)num_steps;
 
 #pragma omp parallel for reduction(+ : sum)
-	for (int i = 1; i <= num_steps; ++i) {
-		double x1 = begin + i * step;
-		double x2 = x1 - step;
+	for (int i = 1; i < num_steps; ++i) {
+		double x = begin + i * step;
 
-		sum += (func(x2) + func(x1));
+		sum += 2 * func(x);
 	}
 
 	return sum * 0.5 * step;
